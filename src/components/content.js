@@ -11,6 +11,7 @@ import {BaguageCapture} from "./baguageCapture";
 import {BaguageReprise} from "./baguageReprise";
 import {UsersList} from "./usersList";
 import {UserProfil} from "./userProfil";
+import {ParametersPage} from "./parametersPage";
 
 export class Content extends React.Component {
     render() {
@@ -28,6 +29,7 @@ export class Content extends React.Component {
                     <Route path='/reprise' component={BaguageReprise}/>
                     <Route path='/listes' component={UsersList}/>
                     <Route path='/profil' component={UserProfil}/>
+                    <Route path='/parameters' component={ParametersPage}/>
                 </Switch>
             </div>
         )

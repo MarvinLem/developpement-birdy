@@ -6,6 +6,7 @@ import firebase from 'firebase';
 export class EncyclopediaList extends React.Component {
     state = {
         data: [],
+        search: '',
     };
 
     componentDidMount() {
@@ -13,7 +14,15 @@ export class EncyclopediaList extends React.Component {
         encyclopedie.on('value', (encyclopedie) => {
             this.setState({data: encyclopedie.val()});
         });
+
+        const image = firebase.storage().ref().child('images/mesange-bleue.jpg');
+        console.log(image.name);
     }
+
+    handleSearchInput = ({currentTarget: input}) => {
+        const searchInput = input.value;
+        this.setState({search: searchInput});
+    };
 
     render() {
         const {data} = this.state;
@@ -21,10 +30,10 @@ export class EncyclopediaList extends React.Component {
             <React.Fragment>
                 <form className="search">
                     <img src={search} alt=" "/>
-                    <input type="text" placeholder="Rechercher"/>
+                    <input onChange={this.handleSearchInput} type="text" placeholder="Rechercher"/>
                 </form>
                 <ul className="encyclopedia">
-                    {data.map((encyclopedie, index) => <li key={index}><Link to={{ pathname: '/bird', state: { encyclopedie : encyclopedie}}}>{encyclopedie.nom}</Link></li>)}
+                    {data.map((encyclopedie, index) => { if(encyclopedie.nom.toLowerCase().includes(this.state.search.toLowerCase())){return <li key={index}><Link to={{ pathname: '/bird', state: { encyclopedie : encyclopedie}}}>{encyclopedie.nom}</Link></li>}})}
                 </ul>
             </React.Fragment>
         )

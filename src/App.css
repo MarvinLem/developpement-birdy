@@ -60,6 +60,14 @@ p.small{
   font-size: 14px;
 }
 
+p.error{
+  color: #8D361B;
+  width: 90%;
+  margin: 0 auto;
+  font-size: 11px;
+  text-align: center;
+}
+
 p.big{
   color: #8D361B;
   font-size: 14px;

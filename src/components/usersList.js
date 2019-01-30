@@ -6,6 +6,7 @@ import firebase from 'firebase';
 export class UsersList extends React.Component {
     state = {
         data: [],
+        search: '',
     };
 
     componentDidMount() {
@@ -15,16 +16,21 @@ export class UsersList extends React.Component {
         });
     }
 
+    handleSearchInput = ({currentTarget: input}) => {
+        const searchInput = input.value;
+        this.setState({search: searchInput});
+    };
+
     render() {
         const {data} = this.state;
         return (
             <React.Fragment>
                 <form className="search">
                     <img src={search} alt=" "/>
-                    <input type="text" placeholder="Rechercher"/>
+                    <input onChange={this.handleSearchInput} type="text" placeholder="Rechercher"/>
                 </form>
                 <ul className="encyclopedia">
-                    {data.map((users, index) => <li key={index}><Link to={{ pathname: '/profil', state: { users : users}}}>{users.nom}</Link></li>)}
+                    {data.map((users, index) => { if(users.nom.toLowerCase().includes(this.state.search.toLowerCase())){ return <li key={index}><Link to={{ pathname: '/profil', state: { users : users}}}>{users.nom}</Link></li>}})}
                 </ul>
             </React.Fragment>
         )

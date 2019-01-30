@@ -1,5 +1,5 @@
 import React from 'react';
-import mesange from '../assets/mesange.jpg';
+import mesange from '../assets/mesange-bleue.jpg';
 
 export class BirdDescription extends React.Component {
     state = {

@@ -12,6 +12,7 @@ export class HomePage extends React.Component {
                     <button className="nav-button"><Link to='/carte'>Carte</Link></button>
                     <button className="nav-button"><Link to='/capture'>Baguage</Link></button>
                     <button className="nav-button"><Link to='/listes'>Listes</Link></button>
+                    <button className="nav-button"><Link to='/parameters'>Paramètres</Link></button>
                 </nav>
             </React.Fragment>
         )
