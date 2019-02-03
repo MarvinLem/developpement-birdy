@@ -16,6 +16,8 @@ export class BaguageCapture extends React.Component {
         adiposite: '',
         sexe: '',
         age: '',
+        captureError: false,
+        feedback: true,
     };
 
     componentDidMount() {
@@ -38,19 +40,23 @@ export class BaguageCapture extends React.Component {
         let adiposite = this.state.adiposite;
         let sexe = this.state.sexe;
         let age = this.state.age;
-        firebase.database().ref('captures/' + id).update({
-            type: type,
-            date: date,
-            lieu: lieu,
-            nom: nom,
-            numero: numero,
-            longueur: longueur,
-            poids: poids,
-            adiposite: adiposite,
-            sexe: sexe,
-            age: age,
-        });
-        this.setState({createDone: true});
+        if(type !== '' && date !== '' && lieu !== '' && nom !== '' && numero !== '' && longueur !== '' && poids !== '' && adiposite !== '' && sexe !== '' && age !== '') {
+            firebase.database().ref('captures/' + id).update({
+                type: type,
+                date: date,
+                lieu: lieu,
+                nom: nom,
+                numero: numero,
+                longueur: longueur,
+                poids: poids,
+                adiposite: adiposite,
+                sexe: sexe,
+                age: age,
+            });
+            this.setState({createDone: true});
+        } else {
+            this.setState({captureError: true});
+        }
     };
 
     handleTypeAdd = ({currentTarget: input}) => {
@@ -106,7 +112,7 @@ export class BaguageCapture extends React.Component {
     render() {
 
         if (this.state.createDone === true) {
-            return <Redirect to='/home' />
+            return <Redirect to={{ pathname: '/home', state: { feedback : this.state.feedback}}} />
         }
 
         return (
@@ -137,6 +143,13 @@ export class BaguageCapture extends React.Component {
                     <input onChange={this.handleSexeAdd} name="sexe" type="text" value={this.state.sexe}/>
                     <label htmlFor="age">Age</label>
                     <input onChange={this.handleAgeAdd} name="age" type="text" value={this.state.age}/>
+                    <div>
+                        {this.state.captureError === true &&
+                        <p className="error">
+                            *Certains de vos champs ne sont pas remplis !
+                        </p>
+                        }
+                    </div>
                 </form>
                 <button className="main-button create" onClick={this.addBird}>Ajouter</button>
             </React.Fragment>

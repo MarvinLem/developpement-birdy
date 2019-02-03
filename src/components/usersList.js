@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import search from '../assets/search.svg';
 import firebase from 'firebase';
+import profil from '../assets/profil.png';
 
 export class UsersList extends React.Component {
     state = {
@@ -30,7 +31,7 @@ export class UsersList extends React.Component {
                     <input onChange={this.handleSearchInput} type="text" placeholder="Rechercher"/>
                 </form>
                 <ul className="encyclopedia">
-                    {data.map((users, index) => { if(users.nom.toLowerCase().includes(this.state.search.toLowerCase())){ return <li key={index}><Link to={{ pathname: '/profil', state: { users : users}}}>{users.nom}</Link></li>}})}
+                    {data.map((users, index) => { if(users.nom.toLowerCase().includes(this.state.search.toLowerCase())){ return <li key={index}><img src={profil}/><Link to={{ pathname: '/profil', state: { users : users}}}>#{users.id} - {users.nom}</Link></li>}})}
                 </ul>
             </React.Fragment>
         )

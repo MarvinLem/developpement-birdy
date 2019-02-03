@@ -7,6 +7,7 @@ export class EncyclopediaList extends React.Component {
     state = {
         data: [],
         search: '',
+        loading: true,
     };
 
     componentDidMount() {
@@ -14,9 +15,8 @@ export class EncyclopediaList extends React.Component {
         encyclopedie.on('value', (encyclopedie) => {
             this.setState({data: encyclopedie.val()});
         });
-
-        const image = firebase.storage().ref().child('images/mesange-bleue.jpg');
-        console.log(image.name);
+        const isLoading = false;
+        this.setState({loading: isLoading});
     }
 
     handleSearchInput = ({currentTarget: input}) => {
@@ -26,16 +26,38 @@ export class EncyclopediaList extends React.Component {
 
     render() {
         const {data} = this.state;
-        return (
-            <React.Fragment>
-                <form className="search">
-                    <img src={search} alt=" "/>
-                    <input onChange={this.handleSearchInput} type="text" placeholder="Rechercher"/>
-                </form>
-                <ul className="encyclopedia">
-                    {data.map((encyclopedie, index) => { if(encyclopedie.nom.toLowerCase().includes(this.state.search.toLowerCase())){return <li key={index}><Link to={{ pathname: '/bird', state: { encyclopedie : encyclopedie}}}>{encyclopedie.nom}</Link></li>}})}
-                </ul>
-            </React.Fragment>
-        )
+
+        if (this.state.loading === false) {
+
+            return (
+                <React.Fragment>
+                    <form className="search">
+                        <img src={search} alt=" "/>
+                        <input onChange={this.handleSearchInput} type="text" placeholder="Rechercher"/>
+                    </form>
+                    <ul className="encyclopedia">
+                        {data.map((encyclopedie, index) => {
+                            firebase.storage().ref().child('images/' + encyclopedie.nom + '-circle.png').getDownloadURL().then(url => {
+                                document.getElementById(index).src = url;
+                            });
+
+                            if (encyclopedie.nom.toLowerCase().includes(this.state.search.toLowerCase())) {
+                                return <li key={index}><img id={index} src=''/><Link to={{
+                                    pathname: '/bird',
+                                    state: {encyclopedie: encyclopedie}
+                                }}>{encyclopedie.nom}</Link></li>
+                            }
+                        })}
+                    </ul>
+                </React.Fragment>
+            )
+        } else if(this.state.loading === true){
+                return(
+                    <React.Fragment>
+                        <div className="title">
+                            Chargement...
+                        </div>
+                    </React.Fragment>
+                )}
+        }
     }
-}

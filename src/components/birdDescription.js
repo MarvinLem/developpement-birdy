@@ -1,28 +1,34 @@
 import React from 'react';
-import mesange from '../assets/mesange-bleue.jpg';
+import firebase from "firebase";
 
 export class BirdDescription extends React.Component {
     state = {
         data: [],
         bird: '',
         loading: true,
+        imgName: '',
     };
 
     componentDidMount() {
         const encyclopedie = this.props.location.state;
         this.setState({bird: encyclopedie});
         const isLoading = false;
-        this.setState({loading: isLoading})
+        this.setState({loading: isLoading});
     }
 
     render() {
         if (this.state.loading === false) {
+
+            firebase.storage().ref().child('images/' + this.state.bird.encyclopedie.nom + '.jpg').getDownloadURL().then(url => {
+                document.getElementById('bird-image').src = url;
+            });
+
             return (
                 <React.Fragment>
                     <div className="title">
                         {this.state.bird.encyclopedie.nom}
                     </div>
-                    <img className="heading-image" src={mesange} alt=" "/>
+                    <img id="bird-image" className="heading-image" src='' alt=" "/>
                     <h2>{this.state.bird.encyclopedie.latin}</h2>
                     <p className="small">Famille: {this.state.bird.encyclopedie.famille}</p>
                     <p className="small">Taille: {this.state.bird.encyclopedie.taille}</p>

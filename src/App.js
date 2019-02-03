@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import {Heading} from "./components/heading";
+import Heading from "./components/heading";
 import {Content} from "./components/content";
 import firebase from "firebase";
 import config from "./cgfb";

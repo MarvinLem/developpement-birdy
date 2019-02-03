@@ -3,7 +3,8 @@ import firebase from "firebase";
 
 export class UserProfil extends React.Component {
     state = {
-        data: [],
+        dataCaptures: [],
+        dataReprises: [],
         user: '',
         loading: true,
     };
@@ -11,7 +12,12 @@ export class UserProfil extends React.Component {
     componentDidMount() {
         const captures = firebase.database().ref('captures');
         captures.on('value', (captures) => {
-            this.setState({data: captures.val()});
+            this.setState({dataCaptures: captures.val()});
+        });
+
+        const reprises = firebase.database().ref('reprises');
+        reprises.on('value', (reprises) => {
+            this.setState({dataReprises: reprises.val()});
         });
 
         const users = this.props.location.state;
@@ -21,15 +27,16 @@ export class UserProfil extends React.Component {
     }
 
     render() {
-        const {data} = this.state;
+        const {dataCaptures,dataReprises} = this.state;
         if (this.state.loading === false) {
             return (
                 <React.Fragment>
                     <div className="title">
                         Vos baguages
                     </div>
-                    <ul className="encyclopedia users">
-                        {data.map((captures, index) => <li key={index}>{captures.nom}</li>)}
+                    <ul className="encyclopedia birds">
+                        {dataCaptures.map((captures, index) => <li key={index}>Capture: #{captures.numero} - {captures.nom}</li>)}
+                        {dataReprises.map((reprises, index) => <li key={index}>Reprise: #{reprises.numero} - {reprises.nom}</li>)}
                     </ul>
                 </React.Fragment>
             )

@@ -11,6 +11,7 @@ export class CreateSite extends React.Component {
         superficie: '',
         name: '',
         siteError: false,
+        feedback: true,
     };
 
     componentDidMount() {
@@ -62,7 +63,7 @@ export class CreateSite extends React.Component {
 
     render() {
         if (this.state.createDone === true) {
-            return <Redirect to='/home' />
+            return <Redirect to={{ pathname: '/carte', state: { feedback : this.state.feedback}}} />
         }
 
         return (
