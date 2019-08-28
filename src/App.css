@@ -81,7 +81,7 @@ p.small{
 p.error{
   color: #8D361B;
   width: 90%;
-  margin: 0 auto;
+  margin: 0 auto 10px;
   font-size: 11px;
   text-align: center;
 }
@@ -151,7 +151,11 @@ label{
   font-family: Quicksand, sans-serif;
 }
 
-input{
+label span{
+    font-size: 10px;
+}
+
+input,select{
   color: #8D361B;
   width: 68%;
   margin: 5px 16% 20px;
@@ -159,6 +163,7 @@ input{
   border-radius: 40px;
   padding: 10px 5px;
   font-family: Quicksand, sans-serif;
+  box-sizing: border-box;
 }
 
 button{
@@ -178,8 +183,18 @@ button.nav-button{
   margin-bottom: 50px;
 }
 
+button.nav-button--disconnect{
+  border: 1px solid crimson;
+}
+
 button.nav-button a{
   color: #8D361B;
+  font-family: Quicksand, sans-serif;
+  font-size: 18px;
+}
+
+button.nav-button--disconnect{
+  color: crimson;
   font-family: Quicksand, sans-serif;
   font-size: 18px;
 }
@@ -195,15 +210,28 @@ button.main-button{
   width: 60%;
   margin-top: 50px;
   box-shadow: 0 3px 12px lightgrey;
+  margin-bottom: 50px;
 }
 
 button.map{
   font-size: 20px;
-  margin-bottom: 50px;
+}
+
+button.maplist{
+    font-size: 12px;
 }
 
 button.create{
   margin-top: 20px;
+}
+
+button.edit{
+    font-size: 16px;
+}
+
+button.delete{
+    font-size: 16px;
+    background-color: crimson;
 }
 
 button a{
@@ -241,6 +269,20 @@ ul.encyclopedia img{
 
 ul.encyclopedia li{
     text-align: left;
+}
+
+ul.encyclopedia li.site{
+    box-shadow: 0 3px 8px lightgrey;
+    border-radius: 50px;
+    margin: 30px auto;
+    padding: 20px 10px;
+    text-align: center;
+}
+
+ul.encyclopedia li.site a{
+    position: inherit;
+    font-size: 16px;
+    text-align: center;
 }
 
 ul.encyclopedia li a{

@@ -32,6 +32,7 @@ export class ConnexionForm extends React.Component {
         let usersList = this.state.usersList;
         usersList.forEach((user) => {
             if(user.nom === this.state.username && user.pass === this.state.password){
+                localStorage.setItem('user', user.nom);
                 this.setState({authDone: true});
             } else {
                 this.setState({authError: true});

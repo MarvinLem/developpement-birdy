@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, Redirect } from 'react-router-dom';
 import firebase from "firebase";
 
 export class UserProfil extends React.Component {
@@ -20,14 +21,21 @@ export class UserProfil extends React.Component {
             this.setState({dataReprises: reprises.val()});
         });
 
+
         const users = this.props.location.state;
         this.setState({user: users});
+
         const isLoading = false;
-        this.setState({loading: isLoading})
+        this.setState({loading: isLoading});
     }
 
     render() {
         const {dataCaptures,dataReprises} = this.state;
+
+        if (!localStorage.getItem('user')) {
+            return <Redirect to={{ pathname: '/'}} />
+        }
+
         if (this.state.loading === false) {
             return (
                 <React.Fragment>
@@ -35,8 +43,8 @@ export class UserProfil extends React.Component {
                         Vos baguages
                     </div>
                     <ul className="encyclopedia birds">
-                        {dataCaptures.map((captures, index) => <li key={index}>Capture: #{captures.numero} - {captures.nom}</li>)}
-                        {dataReprises.map((reprises, index) => <li key={index}>Reprise: #{reprises.numero} - {reprises.nom}</li>)}
+                        {dataCaptures.map((captures, index) => <li className="site" key={index}><Link to={{ pathname: '/editCapture', state: { captures : captures, index : index}}}>Capture: #{captures.numero} - {captures.nom}</Link></li>)}
+                        {dataReprises.map((reprises, index) => <li className="site" key={index}><Link to={{ pathname: '/editReprise', state: { reprises : reprises, index : index}}}>Reprise: #{reprises.numero} - {reprises.nom}</Link></li>)}
                     </ul>
                 </React.Fragment>
             )

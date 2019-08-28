@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import search from '../assets/search.svg';
 import firebase from 'firebase';
 import profil from '../assets/profil.png';
@@ -24,6 +24,11 @@ export class UsersList extends React.Component {
 
     render() {
         const {data} = this.state;
+
+        if (!localStorage.getItem('user')) {
+            return <Redirect to={{ pathname: '/'}} />
+        }
+
         return (
             <React.Fragment>
                 <form className="search">

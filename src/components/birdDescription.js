@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import firebase from "firebase";
 
 export class BirdDescription extends React.Component {
@@ -22,6 +23,10 @@ export class BirdDescription extends React.Component {
             firebase.storage().ref().child('images/' + this.state.bird.encyclopedie.nom + '.jpg').getDownloadURL().then(url => {
                 document.getElementById('bird-image').src = url;
             });
+
+            if (!localStorage.getItem('user')) {
+                return <Redirect to={{ pathname: '/'}} />
+            }
 
             return (
                 <React.Fragment>

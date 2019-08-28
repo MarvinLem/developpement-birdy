@@ -6,7 +6,8 @@ export class BaguageReprise extends React.Component {
     state = {
         createDone: false,
         reprisesList: [],
-        type: '',
+        capturesList: [],
+        type: 'Filet',
         date: '',
         lieu: '',
         nom: '',
@@ -14,9 +15,13 @@ export class BaguageReprise extends React.Component {
         longueur: '',
         poids: '',
         adiposite: '',
-        sexe: '',
+        sexe: 'Male',
         age: '',
+        user: '',
         repriseError: false,
+        numeroError: false,
+        adipositeError: false,
+        baguageError: false,
         feedback: true,
     };
 
@@ -25,6 +30,12 @@ export class BaguageReprise extends React.Component {
         birds.on('value', (birds) => {
             this.setState({reprisesList: birds.val()});
         });
+        const baguageNumber = firebase.database().ref('captures');
+        baguageNumber.on('value', (birds) => {
+            this.setState({capturesList: birds.val()});
+        });
+        const user = localStorage.getItem('user');
+        this.setState({user: user});
     }
 
     addBird = (e) => {
@@ -40,20 +51,60 @@ export class BaguageReprise extends React.Component {
         let adiposite = this.state.adiposite;
         let sexe = this.state.sexe;
         let age = this.state.age;
+        let user = this.state.user;
+        let numeroRegex = RegExp('^[0-9]{4}$');
+        let adipositeRegex = RegExp('^[1-9][0-9]?$|^100$');
+        let numeroError = this.state.numeroError;
+        let adipositeError = this.state.adipositeError;
+        let baguageError = this.state.baguageError;
+        console.log(this.state.capturesList);
         if(type !== '' && date !== '' && lieu !== '' && nom !== '' && numero !== '' && longueur !== '' && poids !== '' && adiposite !== '' && sexe !== '' && age !== '') {
-            firebase.database().ref('reprises/' + id).update({
-                type: type,
-                date: date,
-                lieu: lieu,
-                nom: nom,
-                numero: numero,
-                longueur: longueur,
-                poids: poids,
-                adiposite: adiposite,
-                sexe: sexe,
-                age: age,
-            });
-            this.setState({createDone: true});
+
+            this.setState({repriseError: false});
+
+            if(!numeroRegex.test(this.state.numero)){
+                this.setState({numeroError: true});
+                numeroError = true;
+            } else {
+                this.setState({numeroError: false});
+                numeroError = false;
+            }
+
+            if(!adipositeRegex.test(this.state.adiposite)){
+                this.setState({adipositeError: true});
+                adipositeError = true;
+            } else {
+                this.setState({adipositeError: false});
+                adipositeError = false;
+            }
+
+            for(let i=0;i<this.state.capturesList.length;i++){
+                if(this.state.capturesList[i].numero === numero){
+                    this.setState({baguageError: false});
+                    baguageError = false;
+                    i = this.state.capturesList.length;
+                } else {
+                    this.setState({baguageError: true});
+                    baguageError = true;
+                }
+            }
+
+            if (numeroError === false && adipositeError === false && baguageError === false) {
+                firebase.database().ref('reprises/' + id).update({
+                    type: type,
+                    date: date,
+                    lieu: lieu,
+                    nom: nom,
+                    numero: numero,
+                    longueur: longueur,
+                    poids: poids,
+                    adiposite: adiposite,
+                    sexe: sexe,
+                    age: age,
+                    user: user,
+                });
+                this.setState({createDone: true});
+            }
         } else {
             this.setState({repriseError: true});
         }
@@ -114,6 +165,10 @@ export class BaguageReprise extends React.Component {
             return <Redirect to={{ pathname: '/home', state: { feedback : this.state.feedback}}} />
         }
 
+        if (!localStorage.getItem('user')) {
+            return <Redirect to={{ pathname: '/'}} />
+        }
+
         return (
             <React.Fragment>
                 <div className="title">
@@ -122,26 +177,54 @@ export class BaguageReprise extends React.Component {
                 </div>
                 <form className="add">
                     <label htmlFor="type">Type de capture</label>
-                    <input onChange={this.handleTypeAdd} name="type" type="text" value={this.state.type}/>
+                    <select onChange={this.handleTypeAdd} name="type" value={this.state.type}>
+                        <option value="Filet">Filet</option>
+                        <option value="Nid">Nid</option>
+                        <option value="Autre">Autre</option>
+                    </select>
                     <label htmlFor="date">Date de capture</label>
-                    <input onChange={this.handleDateAdd} name="date" type="text" value={this.state.date}/>
+                    <input onChange={this.handleDateAdd} name="date" type="date" value={this.state.date}/>
                     <label htmlFor="lieu">Lieu de capture</label>
                     <input onChange={this.handleLieuAdd} name="lieu" type="text" value={this.state.lieu}/>
                     <hr></hr>
                     <label htmlFor="name">Nom de l'oiseau</label>
                     <input onChange={this.handleNomAdd} name="name" type="text" value={this.state.nom}/>
-                    <label htmlFor="number">Numéro de bague</label>
+                    <label htmlFor="number">Numéro de bague <span>(0 à 9999)</span></label>
                     <input onChange={this.handleNumeroAdd} name="number" type="text" value={this.state.numero}/>
-                    <label htmlFor="longueur">Longueur allaire</label>
-                    <input onChange={this.handleLongueurAdd} name="longueur" type="text" value={this.state.longueur}/>
-                    <label htmlFor="poids">Poids</label>
-                    <input onChange={this.handlePoidsAdd} name="poids" type="text" value={this.state.poids}/>
-                    <label htmlFor="adiposite">Adiposité</label>
-                    <input onChange={this.handleAdipositeAdd} name="adiposite" type="text" value={this.state.adiposite}/>
+                    <div>
+                        {this.state.numeroError === true &&
+                        <p className="error">
+                            *Le numéro de baguage n'est pas correct !
+                        </p>
+                        }
+                    </div>
+                    <div>
+                        {this.state.baguageError === true &&
+                        <p className="error">
+                            *Le numéro de baguage n'est pas dans notre base de donnée, vous devez faire une capture et non une reprise !
+                        </p>
+                        }
+                    </div>
+                    <label htmlFor="longueur">Longueur allaire <span>(en cm)</span></label>
+                    <input onChange={this.handleLongueurAdd} name="longueur" type="number" value={this.state.longueur}/>
+                    <label htmlFor="poids">Poids <span>(en gramme)</span></label>
+                    <input onChange={this.handlePoidsAdd} name="poids" type="number" value={this.state.poids}/>
+                    <label htmlFor="adiposite">Adiposité <span>(en %)</span></label>
+                    <input onChange={this.handleAdipositeAdd} name="adiposite" type="number" value={this.state.adiposite}/>
+                    <div>
+                        {this.state.adipositeError === true &&
+                        <p className="error">
+                            *Le taux d'adiposité doit se faire en % (0 à 100) !
+                        </p>
+                        }
+                    </div>
                     <label htmlFor="sexe">Sexe</label>
-                    <input onChange={this.handleSexeAdd} name="sexe" type="text" value={this.state.sexe}/>
-                    <label htmlFor="age">Age</label>
-                    <input onChange={this.handleAgeAdd} name="age" type="text" value={this.state.age}/>
+                    <select onChange={this.handleSexeAdd} name="sexe" value={this.state.sexe}>
+                        <option value="Male">Male</option>
+                        <option value="Femelle">Femelle</option>
+                    </select>
+                    <label htmlFor="age">Age <span>(en mois)</span></label>
+                    <input onChange={this.handleAgeAdd} name="age" type="number" value={this.state.age}/>
                     <div>
                         {this.state.repriseError === true &&
                         <p className="error">

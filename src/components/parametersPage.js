@@ -1,11 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import firebase from 'firebase';
+import {Redirect} from 'react-router-dom';
 
 export class ParametersPage extends React.Component {
     state = {};
 
     render() {
+        if (!localStorage.getItem('user')) {
+            return <Redirect to={{ pathname: '/'}} />
+        }
+
         return (
             <React.Fragment>
                 <div className="title">

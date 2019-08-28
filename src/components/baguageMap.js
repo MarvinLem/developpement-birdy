@@ -1,19 +1,27 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 export class BaguageMap extends React.Component {
     state = {
         feedback: false,
+        feedbackEdit: false,
     };
 
     componentDidMount() {
         if(this.props.location.state) {
             const createFeedback = this.props.location.state.feedback;
             this.setState({feedback: createFeedback});
+            const createFeedbackEdit = this.props.location.state.feedbackEdit;
+            this.setState({feedbackEdit: createFeedbackEdit});
         }
     }
 
     render() {
+
+        if (!localStorage.getItem('user')) {
+            return <Redirect to={{ pathname: '/'}} />
+        }
+
         return (
             <React.Fragment>
                 <div className="title">
@@ -27,7 +35,15 @@ export class BaguageMap extends React.Component {
                     </p>
                     }
                 </div>
+                <div>
+                    {this.state.feedbackEdit === true &&
+                    <p className="feedback">
+                        *Votre site a bien été modifié !
+                    </p>
+                    }
+                </div>
                 <button className="main-button map"><Link to='/site'>Ajouter un site</Link></button>
+                <button className="main-button maplist"><Link to='/sitelist'>Voir les sites de baguage</Link></button>
             </React.Fragment>
         )
     }

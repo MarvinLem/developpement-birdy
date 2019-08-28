@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import search from '../assets/search.svg';
 import firebase from 'firebase';
 
@@ -26,6 +26,10 @@ export class EncyclopediaList extends React.Component {
 
     render() {
         const {data} = this.state;
+
+        if (!localStorage.getItem('user')) {
+            return <Redirect to={{ pathname: '/'}} />
+        }
 
         if (this.state.loading === false) {
 
